@@ -28,7 +28,7 @@ func (logger *Logger) WriterLevel(level Level) *io.PipeWriter {
 	case PanicLevel:
 		printFunc = logger.Panic
 	default:
-		printFunc = logger.Print
+		printFunc = logger.Info
 	}
 
 	go logger.writerScanner(reader, printFunc)

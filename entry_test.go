@@ -51,7 +51,7 @@ func TestEntryPanicln(t *testing.T) {
 	logger := New()
 	logger.Out = &bytes.Buffer{}
 	entry := NewEntry(logger)
-	entry.WithField("err", errBoom).Panicln("kaboom")
+	entry.WithField("err", errBoom).Panic("kaboom")
 }
 
 func TestEntryPanicf(t *testing.T) {

@@ -8,6 +8,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,15 +57,6 @@ func LogAndAssertText(t *testing.T, log func(*Logger), assertions func(fields ma
 	assertions(fields)
 }
 
-func TestPrint(t *testing.T) {
-	LogAndAssertJSON(t, func(log *Logger) {
-		log.Print("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test")
-		assert.Equal(t, fields["level"], "info")
-	})
-}
-
 func TestInfo(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Info("test")
@@ -85,7 +77,7 @@ func TestWarn(t *testing.T) {
 
 func TestInfolnShouldAddSpacesBetweenStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
-		log.Infoln("test", "test")
+		log.Info("test", "test")
 	}, func(fields Fields) {
 		assert.Equal(t, fields["msg"], "test test")
 	})
@@ -93,7 +85,7 @@ func TestInfolnShouldAddSpacesBetweenStrings(t *testing.T) {
 
 func TestInfolnShouldAddSpacesBetweenStringAndNonstring(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
-		log.Infoln("test", 10)
+		log.Info("test", 10)
 	}, func(fields Fields) {
 		assert.Equal(t, fields["msg"], "test 10")
 	})
@@ -101,7 +93,7 @@ func TestInfolnShouldAddSpacesBetweenStringAndNonstring(t *testing.T) {
 
 func TestInfolnShouldAddSpacesBetweenTwoNonStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
-		log.Infoln(10, 10)
+		log.Info(10, 10)
 	}, func(fields Fields) {
 		assert.Equal(t, fields["msg"], "10 10")
 	})
@@ -109,7 +101,7 @@ func TestInfolnShouldAddSpacesBetweenTwoNonStrings(t *testing.T) {
 
 func TestInfoShouldAddSpacesBetweenTwoNonStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
-		log.Infoln(10, 10)
+		log.Info(10, 10)
 	}, func(fields Fields) {
 		assert.Equal(t, fields["msg"], "10 10")
 	})
@@ -358,4 +350,80 @@ func TestLogrusInterface(t *testing.T) {
 	// test Entry
 	e := logger.WithField("another", "value")
 	fn(e)
+}
+
+func TestLogrusDepthFunc(t *testing.T) {
+	convey.Convey("测试log层级打印", t, func() {
+		var buffer bytes.Buffer
+		logger := New()
+		logger.Out = &buffer
+		logger.Level = DebugLevel
+
+		logger.Debug("test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:362"`)
+		buffer.Reset()
+
+		logger.Info("test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:366"`)
+		buffer.Reset()
+
+		logger.Warn("test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:370"`)
+		buffer.Reset()
+
+		logger.Error("test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:374"`)
+		buffer.Reset()
+
+		logger.Debugf("%s", "test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:378"`)
+		buffer.Reset()
+
+		logger.Infof("%s", "test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:382"`)
+		buffer.Reset()
+
+		logger.Warnf("%s", "test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:386"`)
+		buffer.Reset()
+
+		logger.Errorf("%s", "test")
+		convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:390"`)
+		buffer.Reset()
+
+		func() {
+			logger.DebugEx(1, "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.InfoEx(1, "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.WarnEx(1, "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.ErrorEx(1, "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.DebugExf(1, "%s", "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.InfoExf(1, "%s", "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.WarnExf(1, "%s", "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+
+			logger.ErrorExf(1, "%s", "test")
+			convey.So(buffer.String(), convey.ShouldContainSubstring, `location="logrus_test.go:426"`)
+			buffer.Reset()
+		}()
+
+	})
 }

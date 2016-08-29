@@ -32,6 +32,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	data["time"] = entry.Time.Format(timestampFormat)
 	data["msg"] = entry.Message
 	data["level"] = entry.Level.String()
+	data["location"] = entry.Location
 
 	serialized, err := json.Marshal(data)
 	if err != nil {

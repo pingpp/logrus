@@ -111,73 +111,11 @@ func (logger *Logger) WithError(err error) *Entry {
 	return entry.WithError(err)
 }
 
-func (logger *Logger) Debugf(format string, args ...interface{}) {
-	if logger.Level >= DebugLevel {
-		entry := logger.newEntry()
-		entry.Debugf(format, args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Infof(format string, args ...interface{}) {
-	if logger.Level >= InfoLevel {
-		entry := logger.newEntry()
-		entry.Infof(format, args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Printf(format string, args ...interface{}) {
-	entry := logger.newEntry()
-	entry.Printf(format, args...)
-	logger.releaseEntry(entry)
-}
-
-func (logger *Logger) Warnf(format string, args ...interface{}) {
-	if logger.Level >= WarnLevel {
-		entry := logger.newEntry()
-		entry.Warnf(format, args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Warningf(format string, args ...interface{}) {
-	if logger.Level >= WarnLevel {
-		entry := logger.newEntry()
-		entry.Warnf(format, args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Errorf(format string, args ...interface{}) {
-	if logger.Level >= ErrorLevel {
-		entry := logger.newEntry()
-		entry.Errorf(format, args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Fatalf(format string, args ...interface{}) {
-	if logger.Level >= FatalLevel {
-		entry := logger.newEntry()
-		entry.Fatalf(format, args...)
-		logger.releaseEntry(entry)
-	}
-	Exit(1)
-}
-
-func (logger *Logger) Panicf(format string, args ...interface{}) {
-	if logger.Level >= PanicLevel {
-		entry := logger.newEntry()
-		entry.Panicf(format, args...)
-		logger.releaseEntry(entry)
-	}
-}
-
+//logger Print family
 func (logger *Logger) Debug(args ...interface{}) {
 	if logger.Level >= DebugLevel {
 		entry := logger.newEntry()
-		entry.Debug(args...)
+		entry.DebugEx(1, args...)
 		logger.releaseEntry(entry)
 	}
 }
@@ -185,29 +123,15 @@ func (logger *Logger) Debug(args ...interface{}) {
 func (logger *Logger) Info(args ...interface{}) {
 	if logger.Level >= InfoLevel {
 		entry := logger.newEntry()
-		entry.Info(args...)
+		entry.InfoEx(1, args...)
 		logger.releaseEntry(entry)
 	}
-}
-
-func (logger *Logger) Print(args ...interface{}) {
-	entry := logger.newEntry()
-	entry.Info(args...)
-	logger.releaseEntry(entry)
 }
 
 func (logger *Logger) Warn(args ...interface{}) {
 	if logger.Level >= WarnLevel {
 		entry := logger.newEntry()
-		entry.Warn(args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Warning(args ...interface{}) {
-	if logger.Level >= WarnLevel {
-		entry := logger.newEntry()
-		entry.Warn(args...)
+		entry.WarnEx(1, args...)
 		logger.releaseEntry(entry)
 	}
 }
@@ -215,7 +139,7 @@ func (logger *Logger) Warning(args ...interface{}) {
 func (logger *Logger) Error(args ...interface{}) {
 	if logger.Level >= ErrorLevel {
 		entry := logger.newEntry()
-		entry.Error(args...)
+		entry.ErrorEx(1, args...)
 		logger.releaseEntry(entry)
 	}
 }
@@ -223,7 +147,7 @@ func (logger *Logger) Error(args ...interface{}) {
 func (logger *Logger) Fatal(args ...interface{}) {
 	if logger.Level >= FatalLevel {
 		entry := logger.newEntry()
-		entry.Fatal(args...)
+		entry.FatalEx(1, args...)
 		logger.releaseEntry(entry)
 	}
 	Exit(1)
@@ -232,70 +156,174 @@ func (logger *Logger) Fatal(args ...interface{}) {
 func (logger *Logger) Panic(args ...interface{}) {
 	if logger.Level >= PanicLevel {
 		entry := logger.newEntry()
-		entry.Panic(args...)
+		entry.PanicEx(1, args...)
 		logger.releaseEntry(entry)
 	}
 }
 
-func (logger *Logger) Debugln(args ...interface{}) {
+//logger PrintEx family
+func (logger *Logger) DebugEx(depth int, args ...interface{}) {
 	if logger.Level >= DebugLevel {
 		entry := logger.newEntry()
-		entry.Debugln(args...)
+		entry.DebugEx(1+depth, args...)
 		logger.releaseEntry(entry)
 	}
 }
 
-func (logger *Logger) Infoln(args ...interface{}) {
+func (logger *Logger) InfoEx(depth int, args ...interface{}) {
 	if logger.Level >= InfoLevel {
 		entry := logger.newEntry()
-		entry.Infoln(args...)
+		entry.InfoEx(1+depth, args...)
 		logger.releaseEntry(entry)
 	}
 }
 
-func (logger *Logger) Println(args ...interface{}) {
-	entry := logger.newEntry()
-	entry.Println(args...)
-	logger.releaseEntry(entry)
-}
-
-func (logger *Logger) Warnln(args ...interface{}) {
+func (logger *Logger) WarnEx(depth int, args ...interface{}) {
 	if logger.Level >= WarnLevel {
 		entry := logger.newEntry()
-		entry.Warnln(args...)
+		entry.WarnEx(1+depth, args...)
 		logger.releaseEntry(entry)
 	}
 }
 
-func (logger *Logger) Warningln(args ...interface{}) {
-	if logger.Level >= WarnLevel {
-		entry := logger.newEntry()
-		entry.Warnln(args...)
-		logger.releaseEntry(entry)
-	}
-}
-
-func (logger *Logger) Errorln(args ...interface{}) {
+func (logger *Logger) ErrorEx(depth int, args ...interface{}) {
 	if logger.Level >= ErrorLevel {
 		entry := logger.newEntry()
-		entry.Errorln(args...)
+		entry.ErrorEx(1+depth, args...)
 		logger.releaseEntry(entry)
 	}
 }
 
-func (logger *Logger) Fatalln(args ...interface{}) {
+func (logger *Logger) FatalEx(depth int, args ...interface{}) {
 	if logger.Level >= FatalLevel {
 		entry := logger.newEntry()
-		entry.Fatalln(args...)
+		entry.FatalEx(1+depth, args...)
 		logger.releaseEntry(entry)
 	}
 	Exit(1)
 }
 
-func (logger *Logger) Panicln(args ...interface{}) {
+func (logger *Logger) PanicEx(depth int, args ...interface{}) {
 	if logger.Level >= PanicLevel {
 		entry := logger.newEntry()
-		entry.Panicln(args...)
+		entry.PanicEx(1+depth, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+// logger Printf family functions
+func (logger *Logger) Debugf(format string, args ...interface{}) {
+	if logger.Level >= DebugLevel {
+		entry := logger.newEntry()
+		entry.DebugExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) Infof(format string, args ...interface{}) {
+	if logger.Level >= InfoLevel {
+		entry := logger.newEntry()
+		entry.InfoExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) Warnf(format string, args ...interface{}) {
+	if logger.Level >= WarnLevel {
+		entry := logger.newEntry()
+		entry.WarnExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) Warningf(format string, args ...interface{}) {
+	if logger.Level >= WarnLevel {
+		entry := logger.newEntry()
+		entry.WarnExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) Errorf(format string, args ...interface{}) {
+	if logger.Level >= ErrorLevel {
+		entry := logger.newEntry()
+		entry.ErrorExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) Fatalf(format string, args ...interface{}) {
+	if logger.Level >= FatalLevel {
+		entry := logger.newEntry()
+		entry.FatalExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+	Exit(1)
+}
+
+func (logger *Logger) Panicf(format string, args ...interface{}) {
+	if logger.Level >= PanicLevel {
+		entry := logger.newEntry()
+		entry.PanicExf(1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+//logger PrintExf family
+
+func (logger *Logger) DebugExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= DebugLevel {
+		entry := logger.newEntry()
+		entry.DebugExf(depth+1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) InfoExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= InfoLevel {
+		entry := logger.newEntry()
+		entry.InfoExf(depth+1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) WarnExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= WarnLevel {
+		entry := logger.newEntry()
+		entry.WarnExf(depth+1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) WarningExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= WarnLevel {
+		entry := logger.newEntry()
+		entry.WarnExf(depth+1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) ErrorExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= ErrorLevel {
+		entry := logger.newEntry()
+		entry.ErrorExf(depth+1, format, args...)
+		logger.releaseEntry(entry)
+	}
+}
+
+func (logger *Logger) FatalExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= FatalLevel {
+		entry := logger.newEntry()
+		entry.FatalExf(depth+1, format, args...)
+		logger.releaseEntry(entry)
+	}
+	Exit(1)
+}
+
+func (logger *Logger) PanicExf(depth int, format string, args ...interface{}) {
+	if logger.Level >= PanicLevel {
+		entry := logger.newEntry()
+		entry.PanicExf(depth+1, format, args...)
 		logger.releaseEntry(entry)
 	}
 }

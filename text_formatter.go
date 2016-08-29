@@ -88,6 +88,8 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 			f.appendKeyValue(b, "time", entry.Time.Format(timestampFormat))
 		}
 		f.appendKeyValue(b, "level", entry.Level.String())
+
+		f.appendKeyValue(b, "location", entry.Location)
 		if entry.Message != "" {
 			f.appendKeyValue(b, "msg", entry.Message)
 		}

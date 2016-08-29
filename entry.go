@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"runtime"
+	"strings"
 	"sync"
 	"time"
 )
@@ -39,6 +41,9 @@ type Entry struct {
 
 	// Message passed to Debug, Info, Warn, Error, Fatal or Panic
 	Message string
+
+	//filename:line
+	Location string
 
 	// When formatter is called in entry.log(), an Buffer may be set to entry
 	Buffer *bytes.Buffer
@@ -87,11 +92,23 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 
 // This function is not declared with a pointer value because otherwise
 // race conditions will occur when using multiple goroutines
-func (entry Entry) log(level Level, msg string) {
+func (entry Entry) log(depth int, level Level, msg string) {
 	var buffer *bytes.Buffer
 	entry.Time = time.Now()
 	entry.Level = level
 	entry.Message = msg
+
+	_, file, line, ok := runtime.Caller(2 + depth)
+	if !ok {
+		file = "???"
+		line = 1
+	} else {
+		slash := strings.LastIndex(file, "/")
+		if slash >= 0 {
+			file = file[slash+1:]
+		}
+	}
+	entry.Location = fmt.Sprintf("%s:%d", file, line)
 
 	if err := entry.Logger.Hooks.Fire(level, &entry); err != nil {
 		entry.Logger.mu.Lock()
@@ -127,46 +144,77 @@ func (entry Entry) log(level Level, msg string) {
 
 func (entry *Entry) Debug(args ...interface{}) {
 	if entry.Logger.Level >= DebugLevel {
-		entry.log(DebugLevel, fmt.Sprint(args...))
+		entry.log(0, DebugLevel, fmt.Sprint(args...))
 	}
-}
-
-func (entry *Entry) Print(args ...interface{}) {
-	entry.Info(args...)
 }
 
 func (entry *Entry) Info(args ...interface{}) {
 	if entry.Logger.Level >= InfoLevel {
-		entry.log(InfoLevel, fmt.Sprint(args...))
+		entry.log(0, InfoLevel, fmt.Sprint(args...))
 	}
 }
-
 func (entry *Entry) Warn(args ...interface{}) {
 	if entry.Logger.Level >= WarnLevel {
-		entry.log(WarnLevel, fmt.Sprint(args...))
+		entry.log(0, WarnLevel, fmt.Sprint(args...))
 	}
-}
-
-func (entry *Entry) Warning(args ...interface{}) {
-	entry.Warn(args...)
 }
 
 func (entry *Entry) Error(args ...interface{}) {
 	if entry.Logger.Level >= ErrorLevel {
-		entry.log(ErrorLevel, fmt.Sprint(args...))
+		entry.log(0, ErrorLevel, fmt.Sprint(args...))
 	}
 }
 
 func (entry *Entry) Fatal(args ...interface{}) {
 	if entry.Logger.Level >= FatalLevel {
-		entry.log(FatalLevel, fmt.Sprint(args...))
+		entry.log(0, FatalLevel, fmt.Sprint(args...))
 	}
 	Exit(1)
 }
 
 func (entry *Entry) Panic(args ...interface{}) {
 	if entry.Logger.Level >= PanicLevel {
-		entry.log(PanicLevel, fmt.Sprint(args...))
+		entry.log(0, PanicLevel, fmt.Sprint(args...))
+	}
+	panic(fmt.Sprint(args...))
+}
+
+//Entry Ex family functions
+
+func (entry *Entry) DebugEx(depth int, args ...interface{}) {
+	if entry.Logger.Level >= DebugLevel {
+		entry.log(depth, DebugLevel, fmt.Sprint(args...))
+	}
+}
+
+func (entry *Entry) InfoEx(depth int, args ...interface{}) {
+	if entry.Logger.Level >= InfoLevel {
+		entry.log(depth, InfoLevel, fmt.Sprint(args...))
+	}
+}
+
+func (entry *Entry) WarnEx(depth int, args ...interface{}) {
+	if entry.Logger.Level >= WarnLevel {
+		entry.log(depth, WarnLevel, fmt.Sprint(args...))
+	}
+}
+
+func (entry *Entry) ErrorEx(depth int, args ...interface{}) {
+	if entry.Logger.Level >= ErrorLevel {
+		entry.log(depth, ErrorLevel, fmt.Sprint(args...))
+	}
+}
+
+func (entry *Entry) FatalEx(depth int, args ...interface{}) {
+	if entry.Logger.Level >= FatalLevel {
+		entry.log(depth, FatalLevel, fmt.Sprint(args...))
+	}
+	Exit(1)
+}
+
+func (entry *Entry) PanicEx(depth int, args ...interface{}) {
+	if entry.Logger.Level >= PanicLevel {
+		entry.log(depth, PanicLevel, fmt.Sprint(args...))
 	}
 	panic(fmt.Sprint(args...))
 }
@@ -175,101 +223,75 @@ func (entry *Entry) Panic(args ...interface{}) {
 
 func (entry *Entry) Debugf(format string, args ...interface{}) {
 	if entry.Logger.Level >= DebugLevel {
-		entry.Debug(fmt.Sprintf(format, args...))
+		entry.DebugEx(1, fmt.Sprintf(format, args...))
 	}
 }
 
 func (entry *Entry) Infof(format string, args ...interface{}) {
 	if entry.Logger.Level >= InfoLevel {
-		entry.Info(fmt.Sprintf(format, args...))
+		entry.InfoEx(1, fmt.Sprintf(format, args...))
 	}
-}
-
-func (entry *Entry) Printf(format string, args ...interface{}) {
-	entry.Infof(format, args...)
 }
 
 func (entry *Entry) Warnf(format string, args ...interface{}) {
 	if entry.Logger.Level >= WarnLevel {
-		entry.Warn(fmt.Sprintf(format, args...))
+		entry.WarnEx(1, fmt.Sprintf(format, args...))
 	}
-}
-
-func (entry *Entry) Warningf(format string, args ...interface{}) {
-	entry.Warnf(format, args...)
 }
 
 func (entry *Entry) Errorf(format string, args ...interface{}) {
 	if entry.Logger.Level >= ErrorLevel {
-		entry.Error(fmt.Sprintf(format, args...))
+		entry.ErrorEx(1, fmt.Sprintf(format, args...))
 	}
 }
 
 func (entry *Entry) Fatalf(format string, args ...interface{}) {
 	if entry.Logger.Level >= FatalLevel {
-		entry.Fatal(fmt.Sprintf(format, args...))
+		entry.FatalEx(1, fmt.Sprintf(format, args...))
 	}
 	Exit(1)
 }
 
 func (entry *Entry) Panicf(format string, args ...interface{}) {
 	if entry.Logger.Level >= PanicLevel {
-		entry.Panic(fmt.Sprintf(format, args...))
+		entry.PanicEx(1, fmt.Sprintf(format, args...))
 	}
 }
 
-// Entry Println family functions
-
-func (entry *Entry) Debugln(args ...interface{}) {
+//Entry PrintExf family functions
+func (entry *Entry) DebugExf(depth int, format string, args ...interface{}) {
 	if entry.Logger.Level >= DebugLevel {
-		entry.Debug(entry.sprintlnn(args...))
+		entry.DebugEx(depth+1, fmt.Sprintf(format, args...))
 	}
 }
 
-func (entry *Entry) Infoln(args ...interface{}) {
+func (entry *Entry) InfoExf(depth int, format string, args ...interface{}) {
 	if entry.Logger.Level >= InfoLevel {
-		entry.Info(entry.sprintlnn(args...))
+		entry.InfoEx(depth+1, fmt.Sprintf(format, args...))
 	}
 }
 
-func (entry *Entry) Println(args ...interface{}) {
-	entry.Infoln(args...)
-}
-
-func (entry *Entry) Warnln(args ...interface{}) {
+func (entry *Entry) WarnExf(depth int, format string, args ...interface{}) {
 	if entry.Logger.Level >= WarnLevel {
-		entry.Warn(entry.sprintlnn(args...))
+		entry.WarnEx(depth+1, fmt.Sprintf(format, args...))
 	}
 }
 
-func (entry *Entry) Warningln(args ...interface{}) {
-	entry.Warnln(args...)
-}
-
-func (entry *Entry) Errorln(args ...interface{}) {
+func (entry *Entry) ErrorExf(depth int, format string, args ...interface{}) {
 	if entry.Logger.Level >= ErrorLevel {
-		entry.Error(entry.sprintlnn(args...))
+		entry.ErrorEx(depth+1, fmt.Sprintf(format, args...))
 	}
 }
 
-func (entry *Entry) Fatalln(args ...interface{}) {
+func (entry *Entry) FatalExf(depth int, format string, args ...interface{}) {
 	if entry.Logger.Level >= FatalLevel {
-		entry.Fatal(entry.sprintlnn(args...))
+		entry.FatalEx(depth+1, fmt.Sprintf(format, args...))
 	}
 	Exit(1)
 }
 
-func (entry *Entry) Panicln(args ...interface{}) {
+func (entry *Entry) PanicExf(depth int, format string, args ...interface{}) {
 	if entry.Logger.Level >= PanicLevel {
-		entry.Panic(entry.sprintlnn(args...))
+		entry.PanicEx(1+depth, fmt.Sprintf(format, args...))
 	}
-}
-
-// Sprintlnn => Sprint no newline. This is to get the behavior of how
-// fmt.Sprintln where spaces are always added between operands, regardless of
-// their type. Instead of vendoring the Sprintln implementation to spare a
-// string allocation, we do the simplest thing.
-func (entry *Entry) sprintlnn(args ...interface{}) string {
-	msg := fmt.Sprintln(args...)
-	return msg[:len(msg)-1]
 }

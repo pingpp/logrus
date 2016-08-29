@@ -42,4 +42,8 @@ func prefixFieldClashes(data Fields) {
 	if l, ok := data["level"]; ok {
 		data["fields.level"] = l
 	}
+
+	if loc, ok := data["location"]; ok {
+		data["fields.location"] = loc
+	}
 }

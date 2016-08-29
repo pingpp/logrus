@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Sirupsen/logrus"
+	"github.com/sdbaiguanghe/logrus"
 )
 
 var log = logrus.New()
@@ -29,22 +29,25 @@ func main() {
 		"number": 8,
 	}).Debug("Started observing beach")
 
-	log.WithFields(logrus.Fields{
-		"animal": "walrus",
-		"size":   10,
-	}).Info("A group of walrus emerges from the ocean")
+	log.Info("hello")
+	log.Infof("Infof")
 
-	log.WithFields(logrus.Fields{
-		"omg":    true,
-		"number": 122,
-	}).Warn("The group's number increased tremendously!")
+	// log.WithFields(logrus.Fields{
+	// 	"animal": "walrus",
+	// 	"size":   10,
+	// }).Info("A group of walrus emerges from the ocean")
 
-	log.WithFields(logrus.Fields{
-		"temperature": -4,
-	}).Debug("Temperature changes")
+	// log.WithFields(logrus.Fields{
+	// 	"omg":    true,
+	// 	"number": 122,
+	// }).Warn("The group's number increased tremendously!")
 
-	log.WithFields(logrus.Fields{
-		"animal": "orca",
-		"size":   9009,
-	}).Panic("It's over 9000!")
+	// log.WithFields(logrus.Fields{
+	// 	"temperature": -4,
+	// }).Debug("Temperature changes")
+
+	// log.WithFields(logrus.Fields{
+	// 	"animal": "orca",
+	// 	"size":   9009,
+	// }).Panic("It's over 9000!")
 }
