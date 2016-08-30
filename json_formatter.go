@@ -29,10 +29,10 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 		timestampFormat = DefaultTimestampFormat
 	}
 
-	data["time"] = entry.Time.Format(timestampFormat)
-	data["msg"] = entry.Message
-	data["level"] = entry.Level.String()
-	data["location"] = entry.Location
+	data["log_created_time"] = entry.Time.Format(timestampFormat)
+	data["log_message"] = entry.Message
+	data["log_level"] = entry.Level.String()
+	data["log_location"] = entry.Location
 
 	serialized, err := json.Marshal(data)
 	if err != nil {

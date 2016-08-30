@@ -74,7 +74,7 @@ func WithFields(fields Fields) *Entry {
 
 // Debug logs a message at level Debug on the standard logger.
 func Debug(args ...interface{}) {
-	std.Debug(args...)
+	std.DebugEx(1, args...)
 }
 
 // // Print logs a message at level Info on the standard logger.
@@ -84,32 +84,68 @@ func Debug(args ...interface{}) {
 
 // Info logs a message at level Info on the standard logger.
 func Info(args ...interface{}) {
-	std.Info(args...)
+	std.InfoEx(1, args...)
 }
 
 // Warn logs a message at level Warn on the standard logger.
 func Warn(args ...interface{}) {
-	std.Warn(args...)
+	std.WarnEx(1, args...)
 }
 
 // Error logs a message at level Error on the standard logger.
 func Error(args ...interface{}) {
-	std.Error(args...)
+	std.ErrorEx(1, args...)
 }
 
 // Panic logs a message at level Panic on the standard logger.
 func Panic(args ...interface{}) {
-	std.Panic(args...)
+	std.PanicEx(1, args...)
 }
 
 // Fatal logs a message at level Fatal on the standard logger.
 func Fatal(args ...interface{}) {
-	std.Fatal(args...)
+	std.FatalEx(1, args...)
+}
+
+//PrintEx Family
+// Debug logs a message at level Debug on the standard logger.
+func DebugEx(depth int, args ...interface{}) {
+	std.DebugEx(depth+1, args...)
+}
+
+// // Print logs a message at level Info on the standard logger.
+// func Print(args ...interface{}) {
+// 	std.Print(args...)
+// }
+
+// Info logs a message at level Info on the standard logger.
+func InfoEx(depth int, args ...interface{}) {
+	std.InfoEx(depth+1, args...)
+}
+
+// Warn logs a message at level Warn on the standard logger.
+func WarnEx(depth int, args ...interface{}) {
+	std.WarnEx(depth+1, args...)
+}
+
+// Error logs a message at level Error on the standard logger.
+func ErrorEx(depth int, args ...interface{}) {
+	std.ErrorEx(depth+1, args...)
+}
+
+// Panic logs a message at level Panic on the standard logger.
+func PanicEx(depth int, args ...interface{}) {
+	std.PanicEx(depth+1, args...)
+}
+
+// Fatal logs a message at level Fatal on the standard logger.
+func FatalEx(depth int, args ...interface{}) {
+	std.FatalEx(depth+1, args...)
 }
 
 // Debugf logs a message at level Debug on the standard logger.
 func Debugf(format string, args ...interface{}) {
-	std.Debugf(format, args...)
+	std.DebugExf(1, format, args...)
 }
 
 // Printf logs a message at level Info on the standard logger.
@@ -119,30 +155,69 @@ func Debugf(format string, args ...interface{}) {
 
 // Infof logs a message at level Info on the standard logger.
 func Infof(format string, args ...interface{}) {
-	std.Infof(format, args...)
+	std.InfoExf(1, format, args...)
 }
 
 // Warnf logs a message at level Warn on the standard logger.
 func Warnf(format string, args ...interface{}) {
-	std.Warnf(format, args...)
+	std.WarnExf(1, format, args...)
 }
 
 // Warningf logs a message at level Warn on the standard logger.
-func Warningf(format string, args ...interface{}) {
-	std.Warningf(format, args...)
-}
+// func Warningf(format string, args ...interface{}) {
+// 	std.WarningExf(1, format, args...)
+// }
 
 // Errorf logs a message at level Error on the standard logger.
 func Errorf(format string, args ...interface{}) {
-	std.Errorf(format, args...)
+	std.ErrorExf(1, format, args...)
 }
 
 // Panicf logs a message at level Panic on the standard logger.
 func Panicf(format string, args ...interface{}) {
-	std.Panicf(format, args...)
+	std.PanicExf(1, format, args...)
 }
 
 // Fatalf logs a message at level Fatal on the standard logger.
 func Fatalf(format string, args ...interface{}) {
-	std.Fatalf(format, args...)
+	std.FatalExf(1, format, args...)
+}
+
+func DebugExf(depth int, format string, args ...interface{}) {
+	std.DebugExf(1+depth, format, args...)
+}
+
+// Printf logs a message at level Info on the standard logger.
+// func Printf(format string, args ...interface{}) {
+// 	std.Printf(format, args...)
+// }
+
+// Infof logs a message at level Info on the standard logger.
+func InfoExf(depth int, format string, args ...interface{}) {
+	std.InfoExf(1+depth, format, args...)
+}
+
+// Warnf logs a message at level Warn on the standard logger.
+func WarnExf(depth int, format string, args ...interface{}) {
+	std.WarnExf(1+depth, format, args...)
+}
+
+// Warningf logs a message at level Warn on the standard logger.
+// func Warningf(format string, args ...interface{}) {
+// 	std.WarningExf(1, format, args...)
+// }
+
+// Errorf logs a message at level Error on the standard logger.
+func ErrorExf(depth int, format string, args ...interface{}) {
+	std.ErrorExf(1+depth, format, args...)
+}
+
+// Panicf logs a message at level Panic on the standard logger.
+func PanicExf(depth int, format string, args ...interface{}) {
+	std.PanicExf(1+depth, format, args...)
+}
+
+// Fatalf logs a message at level Fatal on the standard logger.
+func FatalExf(depth int, format string, args ...interface{}) {
+	std.FatalExf(1+depth, format, args...)
 }

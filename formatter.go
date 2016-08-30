@@ -1,8 +1,6 @@
 package logrus
 
-import "time"
-
-const DefaultTimestampFormat = time.RFC3339
+const DefaultTimestampFormat = "2006-01-02 15:04:05.000"
 
 // The Formatter interface is used to implement a custom Formatter. It takes an
 // `Entry`. It exposes all the fields, including the default ones:
