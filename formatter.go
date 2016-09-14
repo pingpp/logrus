@@ -33,15 +33,19 @@ func prefixFieldClashes(data Fields) {
 		data["fields.time"] = t
 	}
 
-	if m, ok := data["msg"]; ok {
-		data["fields.msg"] = m
+	if m, ok := data["message"]; ok {
+		data["fields.message"] = m
 	}
 
 	if l, ok := data["level"]; ok {
 		data["fields.level"] = l
 	}
 
-	if loc, ok := data["location"]; ok {
-		data["fields.location"] = loc
+	if fn, ok := data["filename"]; ok {
+		data["fields.filename"] = fn
+	}
+
+	if line, ok := data["line"]; ok {
+		data["fields.line"] = line
 	}
 }

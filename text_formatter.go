@@ -89,9 +89,11 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		}
 		f.appendKeyValue(b, "level", entry.Level.String())
 
-		f.appendKeyValue(b, "location", entry.Location)
+		f.appendKeyValue(b, "filename", entry.FileName)
+		f.appendKeyValue(b, "line", entry.Line)
+
 		if entry.Message != "" {
-			f.appendKeyValue(b, "msg", entry.Message)
+			f.appendKeyValue(b, "message", entry.Message)
 		}
 		for _, key := range keys {
 			f.appendKeyValue(b, key, entry.Data[key])

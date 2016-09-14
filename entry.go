@@ -43,7 +43,10 @@ type Entry struct {
 	Message string
 
 	//filename:line
-	Location string
+	//Location string
+	FileName string
+
+	Line int
 
 	// When formatter is called in entry.log(), an Buffer may be set to entry
 	Buffer *bytes.Buffer
@@ -100,15 +103,16 @@ func (entry Entry) log(depth int, level Level, msg string) {
 
 	_, file, line, ok := runtime.Caller(2 + depth)
 	if !ok {
-		file = "???"
-		line = 1
+		entry.FileName = "???"
+		entry.Line = 1
 	} else {
 		slash := strings.LastIndex(file, "/")
 		if slash >= 0 {
-			file = file[slash+1:]
+			entry.FileName = file[slash+1:]
 		}
+		entry.Line = line
 	}
-	entry.Location = fmt.Sprintf("%s:%d", file, line)
+	//entry.Location = fmt.Sprintf("%s:%d", file, line)
 
 	if err := entry.Logger.Hooks.Fire(level, &entry); err != nil {
 		entry.Logger.mu.Lock()
