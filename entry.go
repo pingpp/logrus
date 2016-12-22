@@ -97,7 +97,7 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 // race conditions will occur when using multiple goroutines
 func (entry Entry) log(depth int, level Level, msg string) {
 	var buffer *bytes.Buffer
-	entry.Time = time.Now()
+	entry.Time = time.Now().UTC()
 	entry.Level = level
 	entry.Message = msg
 
